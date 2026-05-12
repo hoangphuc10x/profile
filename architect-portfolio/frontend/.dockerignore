@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+.env
+.env.*
+!.env.example
+public/uploads
+.git
+.gitignore
+*.log
+Dockerfile
+.dockerignore
+.eslintrc.json
+.prettierrc
+.prettierignore

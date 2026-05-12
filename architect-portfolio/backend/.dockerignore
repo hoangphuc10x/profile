@@ -1,0 +1,15 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+uploads
+coverage
+.git
+.gitignore
+*.log
+Dockerfile
+.dockerignore
+.eslintrc.cjs
+.prettierrc
+.prettierignore
