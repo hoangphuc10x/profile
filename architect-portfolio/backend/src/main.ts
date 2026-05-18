@@ -1,8 +1,10 @@
+/* eslint-disable import/first, import/order */
+import * as dotenv from 'dotenv';
+// Override shell env vars with values from .env (must run before AppModule import)
+dotenv.config({ override: true });
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import * as path from 'path';
-import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,14 +22,21 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.setGlobalPrefix('api');
+  //   thís code use for network mobile
+  //   const corsOrigins = process.env.CORS_ORIGIN?.split(',').map((s) => s.trim()) ?? [
+  //   'http://localhost:3000',
+  // ];
+  // app.enableCors({
+  //   origin: corsOrigins,
+  //   credentials: true,
+  // });
 
-  const uploadDir = path.resolve(process.env.UPLOAD_DIR || './uploads');
-  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+  app.setGlobalPrefix('api');
 
   const port = parseInt(process.env.PORT || '4000', 10);
   await app.listen(port);
   console.log(`Backend running on http://localhost:${port}`);
+  console.log(`Cloudinary cloud: ${process.env.CLOUDINARY_CLOUD_NAME || '(none)'}`);
 }
 
 bootstrap();

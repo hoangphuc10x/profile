@@ -1,4 +1,13 @@
-import { IsArray, IsBoolean, IsInt, IsNumber, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateProjectDto {
   @IsOptional() @IsString() @MinLength(3) @MaxLength(160) title?: string;

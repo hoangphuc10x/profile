@@ -22,23 +22,30 @@ export class MailService {
     });
   }
 
-  async sendInquiryNotification(inquiry: {
-    customerName: string;
-    phone: string;
-    email?: string | null;
-    areaRequest?: number | null;
-    budgetRange?: string | null;
-    message?: string | null;
-  }) {
-    const to = process.env.MAIL_TO || process.env.SMTP_USER;
+  async sendInquiryNotification(
+    inquiry: {
+      customerName: string;
+      phone: string;
+      email?: string | null;
+      areaRequest?: number | null;
+      budgetRange?: string | null;
+      message?: string | null;
+    },
+    opts: { to?: string | null; architectName?: string | null } = {},
+  ) {
+    const to = opts.to || process.env.MAIL_TO || process.env.SMTP_USER;
     if (!to) {
       this.logger.warn('MAIL_TO not set — skipping email.');
       return;
     }
 
-    const subject = `[Yêu cầu mới] ${inquiry.customerName} - ${inquiry.phone}`;
+    const targetLine = opts.architectName
+      ? `<p><em>Yêu cầu này gửi đến KTS: <strong>${escape(opts.architectName)}</strong></em></p>`
+      : '';
+    const subject = `[Yêu cầu mới${opts.architectName ? ` - ${opts.architectName}` : ''}] ${inquiry.customerName} - ${inquiry.phone}`;
     const html = `
       <h2>Yêu cầu liên hệ mới</h2>
+      ${targetLine}
       <p><strong>Tên:</strong> ${escape(inquiry.customerName)}</p>
       <p><strong>Số điện thoại:</strong> ${escape(inquiry.phone)}</p>
       ${inquiry.email ? `<p><strong>Email:</strong> ${escape(inquiry.email)}</p>` : ''}

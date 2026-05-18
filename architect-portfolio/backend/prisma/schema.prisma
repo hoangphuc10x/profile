@@ -4,18 +4,28 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  name         String
-  phone        String?
-  bio          String?
-  avatarUrl    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String     @id @default(cuid())
+  email         String     @unique
+  username      String?    @unique
+  publicSlug    String?    @unique
+  inquiryEmail  String?
+  passwordHash  String
+  name          String
+  phone         String?
+  bio           String?
+  avatarUrl     String?
+  coverImage    String?
+  coverPositionY Float?    @default(50)
+  tagline       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  projects      Project[]
+  blogPosts     BlogPost[]
+  inquiries     Inquiry[]
 }
 
 model Project {
@@ -30,7 +40,16 @@ model Project {
   published   Boolean        @default(true)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  images      ProjectImage[]
+
+  authorId    String?
+  author      User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  images       ProjectImage[]
+  categories   Category[]     @relation("ProjectCategories")
+  testimonials Testimonial[]
+
+  @@index([published, createdAt(sort: Desc)])
+  @@index([authorId])
 }
 
 model ProjectImage {
@@ -41,6 +60,70 @@ model ProjectImage {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  order       Int       @default(0)
+  projects    Project[] @relation("ProjectCategories")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  icon        String?
+  priceFrom   Float?
+  unit        String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  customerName String
+  role         String?
+  content      String
+  rating       Int      @default(5)
+  avatarUrl    String?
+  projectId    String?
+  project      Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  published    Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([published, order])
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String
+  content     String
+  coverImage  String?
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([published, publishedAt(sort: Desc)])
+}
+
+model Faq {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  order     Int     @default(0)
+  published Boolean @default(true)
 }
 
 enum InquiryStatus {
@@ -59,4 +142,10 @@ model Inquiry {
   message      String?
   status       InquiryStatus @default(NEW)
   createdAt    DateTime      @default(now())
+
+  architectId  String?
+  architect    User?         @relation(fields: [architectId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([architectId])
 }

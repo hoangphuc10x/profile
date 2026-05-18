@@ -7,27 +7,19 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
-import * as crypto from 'crypto';
+import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-
-const uploadDir = path.resolve(process.env.UPLOAD_DIR || './uploads');
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Controller('upload')
 export class UploadController {
+  constructor(private readonly cloudinary: CloudinaryService) {}
+
   @UseGuards(JwtAuthGuard)
   @Post('images')
   @UseInterceptors(
     FilesInterceptor('files', 12, {
-      storage: diskStorage({
-        destination: uploadDir,
-        filename: (_req, file, cb) => {
-          const ext = path.extname(file.originalname).toLowerCase();
-          const id = crypto.randomBytes(8).toString('hex');
-          cb(null, `${Date.now()}-${id}${ext}`);
-        },
-      }),
+      storage: memoryStorage(),
       fileFilter: (_req, file, cb) => {
         if (!/^image\/(jpe?g|png|webp|gif)$/i.test(file.mimetype)) {
           return cb(new BadRequestException('Chỉ chấp nhận file ảnh') as any, false);
@@ -37,10 +29,15 @@ export class UploadController {
       limits: { fileSize: 8 * 1024 * 1024 },
     }),
   )
-  upload(@UploadedFiles() files: Express.Multer.File[]) {
+  async upload(@UploadedFiles() files: Express.Multer.File[]) {
     if (!files?.length) throw new BadRequestException('Không có file nào');
+
+    const results = await Promise.all(files.map((f) => this.cloudinary.uploadBuffer(f.buffer)));
+
     return {
-      urls: files.map((f) => `/uploads/${f.filename}`),
+      urls: results.map((r) => r.secure_url),
+      // public_id lưu lại để có thể delete sau này
+      publicIds: results.map((r) => r.public_id),
     };
   }
 }

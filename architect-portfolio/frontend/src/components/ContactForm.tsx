@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { api } from '@/lib/api';
 
-export function ContactForm() {
+export function ContactForm({ architectSlug }: { architectSlug?: string } = {}) {
   const [form, setForm] = useState({
     customerName: '',
     phone: '',
@@ -27,16 +27,25 @@ export function ContactForm() {
         areaRequest: form.areaRequest ? Number(form.areaRequest) : undefined,
         budgetRange: form.budgetRange || undefined,
         message: form.message || undefined,
+        architectSlug: architectSlug || undefined,
       });
       setStatus('sent');
-      setForm({ customerName: '', phone: '', email: '', areaRequest: '', budgetRange: '', message: '' });
+      setForm({
+        customerName: '',
+        phone: '',
+        email: '',
+        areaRequest: '',
+        budgetRange: '',
+        message: '',
+      });
     } catch (err: any) {
       setStatus('error');
       setError(err.message || 'Gửi thất bại');
     }
   }
 
-  const input = 'w-full rounded border border-slate-300 px-3 py-2 outline-none focus:border-brand-accent';
+  const input =
+    'w-full rounded border border-slate-300 bg-white px-3 py-2 outline-none focus:border-sage-400 dark:border-slate-700 dark:bg-ink-900 dark:text-slate-100 dark:placeholder:text-slate-500';
 
   if (status === 'sent') {
     return (
@@ -114,7 +123,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="rounded bg-brand px-5 py-2.5 font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+        className="rounded-full bg-sage-500 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-white hover:bg-sage-600 disabled:opacity-60"
       >
         {status === 'sending' ? 'Đang gửi...' : 'Gửi yêu cầu'}
       </button>

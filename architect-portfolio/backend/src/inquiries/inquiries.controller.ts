@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { InquiryStatus } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { InquiriesService } from './inquiries.service';
@@ -15,19 +15,19 @@ export class InquiriesController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  list() {
-    return this.inquiries.findAll();
+  listMine(@Req() req: any) {
+    return this.inquiries.findAllForArchitect(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id/status')
-  updateStatus(@Param('id') id: string, @Body('status') status: InquiryStatus) {
-    return this.inquiries.updateStatus(id, status);
+  updateStatus(@Param('id') id: string, @Body('status') status: InquiryStatus, @Req() req: any) {
+    return this.inquiries.updateStatus(id, req.user.userId, status);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.inquiries.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.inquiries.remove(id, req.user.userId);
   }
 }

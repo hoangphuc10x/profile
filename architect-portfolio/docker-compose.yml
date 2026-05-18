@@ -20,7 +20,6 @@ services:
     build:
       context: ./backend
     container_name: architect-backend
-    profiles: ["full"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -30,8 +29,10 @@ services:
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       JWT_EXPIRES_IN: 7d
-      UPLOAD_DIR: /app/uploads
       PUBLIC_URL: ${PUBLIC_URL:-http://localhost:4000}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
@@ -41,8 +42,6 @@ services:
       MAIL_TO: ${MAIL_TO:-}
     ports:
       - "4000:4000"
-    volumes:
-      - architect_uploads:/app/uploads
 
   frontend:
     build:
@@ -51,7 +50,6 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api}
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:4000}
     container_name: architect-frontend
-    profiles: ["full"]
     depends_on:
       - backend
     ports:
@@ -59,4 +57,3 @@ services:
 
 volumes:
   architect_pgdata:
-  architect_uploads:

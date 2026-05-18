@@ -3,8 +3,9 @@ const nextConfig = {
   output: 'standalone',
   images: {
     remotePatterns: [
-      { protocol: 'http', hostname: 'localhost', port: '4000', pathname: '/uploads/**' },
-      { protocol: 'http', hostname: 'backend', port: '4000', pathname: '/uploads/**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'picsum.photos', pathname: '/**' },
     ],
   },
 };

@@ -1,4 +1,12 @@
-import { IsEmail, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateInquiryDto {
   @IsString()
@@ -27,4 +35,9 @@ export class CreateInquiryDto {
   @IsString()
   @MaxLength(2000)
   message?: string;
+
+  // Slug của KTS nhận yêu cầu (vd: 'tung', 'hung'). Có thể bỏ trống → inquiry chung.
+  @IsOptional()
+  @IsString()
+  architectSlug?: string;
 }

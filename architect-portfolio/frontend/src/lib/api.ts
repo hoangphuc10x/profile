@@ -15,6 +15,30 @@ export type Project = {
   images: { id: string; url: string; order: number }[];
 };
 
+export type ArchitectListItem = {
+  id: string;
+  name: string;
+  publicSlug: string;
+  avatarUrl: string | null;
+  tagline: string | null;
+  bio: string | null;
+  projectCount: number;
+};
+
+export type Architect = {
+  id: string;
+  name: string;
+  publicSlug: string;
+  avatarUrl: string | null;
+  coverImage: string | null;
+  coverPositionY: number | null;
+  tagline: string | null;
+  bio: string | null;
+  phone: string | null;
+  email: string;
+  projects: Project[];
+};
+
 export type Inquiry = {
   id: string;
   customerName: string;
@@ -53,6 +77,8 @@ export const api = {
   // Public
   listProjects: () => request<Project[]>('/projects'),
   getProject: (slug: string) => request<Project>(`/projects/slug/${slug}`),
+  listArchitects: () => request<ArchitectListItem[]>('/architects'),
+  getArchitect: (slug: string) => request<Architect>(`/architects/${slug}`),
   createInquiry: (data: Record<string, unknown>) =>
     request<{ ok: boolean; id: string }>('/inquiries', {
       method: 'POST',
@@ -60,11 +86,20 @@ export const api = {
     }),
 
   // Auth
-  login: (email: string, password: string) =>
-    request<{ token: string; user: { id: string; email: string; name: string } }>(
-      '/auth/login',
-      { method: 'POST', body: JSON.stringify({ email, password }) },
-    ),
+  login: (identifier: string, password: string) =>
+    request<{
+      token: string;
+      user: {
+        id: string;
+        email: string;
+        username: string | null;
+        publicSlug: string | null;
+        name: string;
+      };
+    }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ identifier, password }),
+    }),
 
   // Admin (token-required)
   withToken(token: string) {
@@ -74,7 +109,7 @@ export const api = {
       updateMe: (data: Record<string, unknown>) =>
         request('/auth/me', { method: 'PATCH', headers: auth, body: JSON.stringify(data) }),
 
-      listAllProjects: () => request<Project[]>('/projects/admin/all', { headers: auth }),
+      listMyProjects: () => request<Project[]>('/projects/admin/mine', { headers: auth }),
       getProjectById: (id: string) => request<Project>(`/projects/admin/${id}`, { headers: auth }),
       createProject: (data: Record<string, unknown>) =>
         request<Project>('/projects', {

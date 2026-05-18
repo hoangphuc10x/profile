@@ -9,7 +9,7 @@ export class AuthController {
 
   @Post('login')
   login(@Body() dto: LoginDto) {
-    return this.authService.login(dto.email, dto.password);
+    return this.authService.login(dto.identifier, dto.password);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -21,7 +21,16 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Patch('me')
   updateMe(@Req() req: any, @Body() body: any) {
-    const { name, phone, bio, avatarUrl } = body;
-    return this.authService.updateProfile(req.user.userId, { name, phone, bio, avatarUrl });
+    const { name, phone, bio, tagline, avatarUrl, coverImage, coverPositionY, inquiryEmail } = body;
+    return this.authService.updateProfile(req.user.userId, {
+      name,
+      phone,
+      bio,
+      tagline,
+      avatarUrl,
+      coverImage,
+      coverPositionY,
+      inquiryEmail,
+    });
   }
 }

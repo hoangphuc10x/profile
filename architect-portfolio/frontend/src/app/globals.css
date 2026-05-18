@@ -6,10 +6,28 @@
   color-scheme: light;
 }
 
-html, body {
-  @apply bg-white text-slate-900;
+.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  @apply bg-white text-slate-900 transition-colors;
+}
+
+.dark html,
+.dark body {
+  @apply bg-ink-950 text-slate-100;
 }
 
 .container-page {
   @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+/* Smooth color transitions when switching theme */
+* {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
