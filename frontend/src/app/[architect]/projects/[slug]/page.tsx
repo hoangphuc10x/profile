@@ -131,7 +131,7 @@ export default async function ArchitectProjectDetailPage({
               Để lại thông tin, KTS {me.name} sẽ liên hệ tư vấn miễn phí.
             </p>
             <Link
-              href={`/${architectSlug}/contact`}
+              href={`/${architectSlug}#contact`}
               className="mt-6 inline-block rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-wider text-sage-600 hover:bg-cream-50 sm:text-sm"
             >
               Liên hệ ngay

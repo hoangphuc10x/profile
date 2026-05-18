@@ -514,12 +514,12 @@ export default async function ArchitectPage({
                 )}
 
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <Link
-                    href={`/${slug}/contact`}
+                  <a
+                    href="#contact"
                     className="bg-ink-950 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ink-900 dark:bg-white dark:text-ink-950"
                   >
                     Liên hệ tư vấn
-                  </Link>
+                  </a>
                   {architect.phone && (
                     <a
                       href={`tel:${architect.phone}`}
